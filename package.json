@@ -4,7 +4,10 @@
   "description": "A sequence container which can be observed for changes.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
-  "dependencies": {},
+  "dependencies": {
+    "phosphor-arrays": "^1.0.5",
+    "phosphor-signaling": "^1.1.2"
+  },
   "devDependencies": {
     "coveralls": "^2.11.4",
     "expect.js": "^0.3.1",
