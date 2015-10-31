@@ -288,7 +288,7 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
-   * A signal emitted when the widget is disposed.
+   * A signal emitted when the list changes state.
    *
    * #### Notes
    * This is a pure delegate to the [[changedSignal]].
