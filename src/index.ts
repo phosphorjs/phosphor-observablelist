@@ -374,7 +374,7 @@ class ObservableList<T> implements IObservableList<T> {
    *   index is out of range.
    */
   set(index: number, item: T): T {
-    var i = this._norm(index);
+    let i = this._norm(index);
     if (!this._check(i)) return void 0;
     return this.setItem(i, item);
   }
@@ -418,9 +418,9 @@ class ObservableList<T> implements IObservableList<T> {
    *   is out of range.
    */
   move(fromIndex: number, toIndex: number): boolean {
-    var i = this._norm(fromIndex);
+    let i = this._norm(fromIndex);
     if (!this._check(i)) return false;
-    var j = this._norm(toIndex);
+    let j = this._norm(toIndex);
     if (!this._check(j)) return false;
     return this.moveItem(i, j);
   }
@@ -434,7 +434,7 @@ class ObservableList<T> implements IObservableList<T> {
    *   not contained in the list.
    */
   remove(item: T): number {
-    var i = this.internal.indexOf(item);
+    let i = this.internal.indexOf(item);
     if (i !== -1) this.removeItem(i);
     return i;
   }
@@ -449,7 +449,7 @@ class ObservableList<T> implements IObservableList<T> {
    *   index is out of range.
    */
   removeAt(index: number): T {
-    var i = this._norm(index);
+    let i = this._norm(index);
     if (!this._check(i)) return void 0;
     return this.removeItem(i);
   }
@@ -530,7 +530,7 @@ class ObservableList<T> implements IObservableList<T> {
    */
   protected moveItem(fromIndex: number, toIndex: number): boolean {
     arrays.move(this.internal, fromIndex, toIndex);
-    var item = this.internal[toIndex];
+    let item = this.internal[toIndex];
     this.changed.emit({
       type: ListChangeType.Move,
       newIndex: toIndex,
@@ -553,7 +553,7 @@ class ObservableList<T> implements IObservableList<T> {
    * This may be reimplemented by subclasses to customize the behavior.
    */
   protected removeItem(index: number): T {
-    var item = arrays.removeAt(this.internal, index);
+    let item = arrays.removeAt(this.internal, index);
     this.changed.emit({
       type: ListChangeType.Remove,
       newIndex: -1,
@@ -582,7 +582,7 @@ class ObservableList<T> implements IObservableList<T> {
    * This may be reimplemented by subclasses to customize the behavior.
    */
   protected replaceItems(index: number, count: number, items: T[]): T[] {
-    var old = this.internal.splice(index, count, ...items);
+    let old = this.internal.splice(index, count, ...items);
     this.changed.emit({
       type: ListChangeType.Replace,
       newIndex: index,
@@ -607,7 +607,7 @@ class ObservableList<T> implements IObservableList<T> {
    * This may be reimplemented by subclasses to customize the behavior.
    */
   protected setItem(index: number, item: T): T {
-    var old = this.internal[index];
+    let old = this.internal[index];
     this.internal[index] = item;
     this.changed.emit({
       type: ListChangeType.Set,
