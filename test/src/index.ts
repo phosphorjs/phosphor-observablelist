@@ -209,6 +209,7 @@ describe('phosphor-observablelist', () => {
         let list = new ObservableList<number>([1, 2, 3]);
         expect(list.slice(1)).to.eql([2, 3]);
       });
+
     });
 
     describe('#set()', () => {
@@ -236,7 +237,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
@@ -269,7 +270,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
@@ -314,7 +315,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
@@ -365,7 +366,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
@@ -403,7 +404,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
@@ -447,7 +448,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
@@ -510,7 +511,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
@@ -540,7 +541,7 @@ describe('phosphor-observablelist', () => {
       });
 
       it('should trigger a changed signal', () => {
-        let called = true;
+        let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
           expect(sender).to.eql(list);
