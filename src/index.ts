@@ -186,11 +186,23 @@ interface IObservableList<T> {
   set(index: number, item: T): T;
 
   /**
+   * Replace the contents of the list with the specified items.
+   *
+   * @param items - The items to assign to the list.
+   *
+   * @returns An array of the previous list items.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, items)`.
+   */
+  assign(items: T[]): T[];
+
+  /**
    * Add an item to the end of the list.
    *
    * @param item - The item to add to the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The index at which the item was added.
    */
   add(item: T): number;
 
@@ -203,7 +215,7 @@ interface IObservableList<T> {
    *
    * @param item - The item to insert into the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The index at which the item was inserted.
    */
   insert(index: number, item: T): number;
 
@@ -216,8 +228,7 @@ interface IObservableList<T> {
    * @param toIndex - The desired index for the item. If this is
    *   negative, it is offset from the end of the list.
    *
-   * @returns `true` if the item was moved or `false` if either index
-   *   is out of range.
+   * @returns `true` if the item was moved, `false` otherwise.
    */
   move(fromIndex: number, toIndex: number): boolean;
 
@@ -252,17 +263,21 @@ interface IObservableList<T> {
    * @param count - The number of items to remove at the given index.
    *   This is clamped to the length of the list.
    *
-   * @param items - The items to insert at the specified index. If
-   *   this is not provided, it defaults to an empty array.
+   * @param items - The items to insert at the specified index.
    *
-   * @returns An array of items removed from the list.
+   * @returns An array of the items removed from the list.
    */
-  replace(index: number, count: number, items?: T[]): T[];
+  replace(index: number, count: number, items: T[]): T[];
 
   /**
    * Remove all items from the list.
+   *
+   * @returns An array of the items removed from the list.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, [])`.
    */
-  clear(): void;
+  clear(): T[];
 }
 
 
@@ -288,7 +303,7 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
-   * A signal emitted when the list changes state.
+   * A signal emitted when the list has changed.
    *
    * #### Notes
    * This is a pure delegate to the [[changedSignal]].
@@ -380,11 +395,25 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
+   * Replace the contents of the list with the specified items.
+   *
+   * @param items - The items to assign to the list.
+   *
+   * @returns An array of the previous list items.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, items)`.
+   */
+  assign(items: T[]): T[] {
+    return this.replaceItems(0, this.internal.length, items);
+  }
+
+  /**
    * Add an item to the end of the list.
    *
    * @param item - The item to add to the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The index at which the item was added.
    */
   add(item: T): number {
     return this.addItem(this.internal.length, item);
@@ -399,7 +428,7 @@ class ObservableList<T> implements IObservableList<T> {
    *
    * @param item - The item to insert into the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The index at which the item was inserted.
    */
   insert(index: number, item: T): number {
     return this.addItem(this._clamp(index), item);
@@ -414,8 +443,7 @@ class ObservableList<T> implements IObservableList<T> {
    * @param toIndex - The desired index for the item. If this is
    *   negative, it is offset from the end of the list.
    *
-   * @returns `true` if the item was moved or `false` if either index
-   *   is out of range.
+   * @returns `true` if the item was moved, `false` otherwise.
    */
   move(fromIndex: number, toIndex: number): boolean {
     let i = this._norm(fromIndex);
@@ -464,72 +492,77 @@ class ObservableList<T> implements IObservableList<T> {
    * @param count - The number of items to remove at the given index.
    *   This is clamped to the length of the list.
    *
-   * @param items - The items to insert at the specified index. If
-   *   this is not provided, it defaults to an empty array.
+   * @param items - The items to insert at the specified index.
    *
-   * @returns An array of items removed from the list.
+   * @returns An array of the items removed from the list.
    */
-  replace(index: number, count: number, items: T[] = []): T[] {
+  replace(index: number, count: number, items: T[]): T[] {
     return this.replaceItems(this._norm(index), this._limit(count), items);
   }
 
   /**
    * Remove all items from the list.
+   *
+   * @returns An array of the items removed from the list.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, [])`.
    */
-  clear(): void {
-    if (this.internal.length === 0) return;
-    this.replaceItems(0, this.internal.length, []);
+  clear(): T[] {
+    return this.replaceItems(0, this.internal.length, []);
   }
 
   /**
    * The protected internal array of items for the list.
    *
-   * This can be accessed directly by subclasses as needed.
+   * #### Notes
+   * Subclasses may access this array directly as needed.
    */
   protected internal: T[];
 
   /**
-   * Add an item at the specified index.
+   * Add an item to the list at the specified index.
    *
-   * @param index - The index at which to add the item. This is assumed
-   *   to be an integer in the range `[0, internal.length]`.
+   * @param index - The index at which to add the item. This must be
+   *   an integer in the range `[0, internal.length]`.
    *
    * @param item - The item to add at the specified index.
    *
-   * @returns The new index of the item.
+   * @returns The index at which the item was added.
    *
    * #### Notes
    * This may be reimplemented by subclasses to customize the behavior.
    */
   protected addItem(index: number, item: T): number {
-    arrays.insert(this.internal, index, item);
+    let i = arrays.insert(this.internal, index, item);
     this.changed.emit({
       type: ListChangeType.Add,
-      newIndex: index,
+      newIndex: i,
       newValue: item,
       oldIndex: -1,
       oldValue: void 0,
     });
-    return index;
+    return i;
   }
 
   /**
-   * Move an item from one index to another.
+   * Move an item in the list from one index to another.
    *
-   * @param fromIndex - The initial index of the item. This is assumed
-   *   to be an integer in the range `[0, internal.length)`.
+   * @param fromIndex - The initial index of the item. This must be
+   *   an integer in the range `[0, internal.length)`.
    *
-   * @param toIndex - The desired index for the item. This is assumed
-   *   to be an integer in the range `[0, internal.length)`.
+   * @param toIndex - The desired index for the item. This must be
+   *   an integer in the range `[0, internal.length)`.
    *
-   * @returns `true` if the item was moved or `false` if either index
-   *   is out of range.
+   * @returns `true` if the item was moved, `false` otherwise.
    *
    * #### Notes
    * This may be reimplemented by subclasses to customize the behavior.
    */
   protected moveItem(fromIndex: number, toIndex: number): boolean {
-    arrays.move(this.internal, fromIndex, toIndex);
+    if (!arrays.move(this.internal, fromIndex, toIndex)) {
+      return false;
+    }
     let item = this.internal[toIndex];
     this.changed.emit({
       type: ListChangeType.Move,
@@ -542,12 +575,12 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
-   * Remove the item at the specified index.
+   * Remove the item from the list at the specified index.
    *
-   * @param index - The index of the item to remove. This is assumed
-   *   to be an integer in the range `[0, internal.length)`.
+   * @param index - The index of the item to remove. This must be
+   *   an integer in the range `[0, internal.length)`.
    *
-   * @returns The removed item.
+   * @returns The item removed from the list.
    *
    * #### Notes
    * This may be reimplemented by subclasses to customize the behavior.
@@ -567,16 +600,15 @@ class ObservableList<T> implements IObservableList<T> {
   /**
    * Replace items at a specific location in the list.
    *
-   * @param index - The index at which to modify the list. This is
-   *   assumed to be an integer in the range `[0, internal.length]`.
+   * @param index - The index at which to modify the list. This must
+   *   be an integer in the range `[0, internal.length]`.
    *
    * @param count - The number of items to remove from the list. This
-   *   is assumed to be an integer in the range `[0, internal.length]`.
+   *   must be an integer in the range `[0, internal.length]`.
    *
-   * @param items - The items to insert at the specified index. If
-   *   this is not provided, it defaults to an empty array.
+   * @param items - The items to insert at the specified index.
    *
-   * @returns An array of items removed from the list.
+   * @returns An array of the items removed from the list.
    *
    * #### Notes
    * This may be reimplemented by subclasses to customize the behavior.
@@ -594,10 +626,10 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
-   * Set the item at a specific index.
+   * Set the item at a specific index in the list.
    *
-   * @param index - The index of interest. This is assumed to be an
-   *   integer in the range `[0, internal.length)`.
+   * @param index - The index of interest. This must be an integer in
+   *   the range `[0, internal.length)`.
    *
    * @param item - The item to set at the index.
    *

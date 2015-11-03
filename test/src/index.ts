@@ -23,7 +23,7 @@ class LoggingList extends ObservableList<number> {
   messages: string[] = [];
 
   get internalArray(): number[] {
-    return this.internal.slice();
+    return this.internal;
   }
 
   protected addItem(index: number, item: number): number {
@@ -71,6 +71,11 @@ describe('phosphor-observablelist', () => {
       it('should accept an array argument', () => {
         let list = new ObservableList<number>([1, 2, 3]);
         expect(list instanceof ObservableList).to.be(true);
+      });
+
+      it('should initialize the list items', () => {
+        let list = new ObservableList<number>([1, 2, 3]);
+        expect(list.slice()).to.eql([1, 2, 3]);
       });
 
     });
@@ -147,14 +152,14 @@ describe('phosphor-observablelist', () => {
     describe('#indexOf()', () => {
 
       it('should get the index of the first occurence of an item in the list', () => {
-        let list = new ObservableList<number>([1, 2, 3]);
+        let list = new ObservableList<number>([1, 2, 3, 3]);
         expect(list.indexOf(1)).to.be(0);
         expect(list.indexOf(2)).to.be(1);
         expect(list.indexOf(3)).to.be(2);
       });
 
       it('should return `-1` if the item is not in the list', () => {
-        let list = new ObservableList<number>([1, 2, 3]);
+        let list = new ObservableList<number>([1, 2, 3, 3]);
         expect(list.indexOf(4)).to.be(-1);
       });
 
@@ -174,10 +179,8 @@ describe('phosphor-observablelist', () => {
 
       it('should get a shallow copy of a portion of the list', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        let slice = list.slice();
-        expect(slice).to.eql([1, 2, 3]);
-        slice.push(4);
         expect(list.slice()).to.eql([1, 2, 3]);
+        expect(list.slice()).to.not.be(list.slice());
       });
 
       it('should index start from the end if negative', () => {
@@ -224,7 +227,7 @@ describe('phosphor-observablelist', () => {
         let list = new ObservableList<number>([1, 2, 3]);
         list.set(-1, 4);
         expect(list.slice()).to.eql([1, 2, 4]);
-      });    
+      });
 
       it('should return the item which occupied the index', () => {
         let list = new ObservableList<number>([1, 2, 3]);
@@ -251,6 +254,39 @@ describe('phosphor-observablelist', () => {
           called = true;
         });
         list.set(1, 4);
+        expect(called).to.be(true);
+      });
+
+    });
+
+    describe('#assign()', () => {
+
+      it('should replace all items in the list', () => {
+        let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
+        list.assign([9, 8, 7, 6]);
+        expect(list.slice()).to.eql([9, 8, 7, 6]);
+      });
+
+      it('should return the old items', () => {
+        let list = new ObservableList<number>([1, 2, 3, 4]);
+        expect(list.assign([9, 8, 7, 6])).to.eql([1, 2, 3, 4]);
+      });
+
+      it('should trigger a changed signal', () => {
+        let called = false;
+        let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
+        list.changed.connect((sender, args) => {
+          expect(sender).to.eql(list);
+          expect(args).to.eql({
+            type: ListChangeType.Replace,
+            newIndex: 0,
+            newValue: [9, 8, 7, 6],
+            oldIndex: 0,
+            oldValue: [1, 2, 3, 4, 5, 6]
+          });
+          called = true;
+        });
+        list.assign([9, 8, 7, 6]);
         expect(called).to.be(true);
       });
 
@@ -312,6 +348,8 @@ describe('phosphor-observablelist', () => {
       it('should return the new index of the item in the list', () => {
         let list = new ObservableList<number>([1, 2, 3]);
         expect(list.insert(10, 4)).to.eql(3);
+        expect(list.insert(-2, 9)).to.eql(2);
+        expect(list.insert(-10, 5)).to.eql(0);
       });
 
       it('should trigger a changed signal', () => {
@@ -499,15 +537,15 @@ describe('phosphor-observablelist', () => {
         expect(list.slice()).to.eql([1, 2]);
       });
 
-      it('should default items to an empty array', () => {
+      it('should handle an empty items array', () => {
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
-        list.replace(1, 10);
+        list.replace(1, 10, []);
         expect(list.slice()).to.eql([1]);
       });
 
       it('should return an array of items removed from the list', () => {
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
-        expect(list.replace(1, 3)).to.eql([2, 3, 4]);
+        expect(list.replace(1, 3, [])).to.eql([2, 3, 4]);
       });
 
       it('should trigger a changed signal', () => {
@@ -524,7 +562,7 @@ describe('phosphor-observablelist', () => {
           });
           called = true;
         });
-        list.replace(0, 10);
+        list.replace(0, 10, []);
         expect(called).to.be(true);
       });
 
@@ -538,6 +576,11 @@ describe('phosphor-observablelist', () => {
         expect(list.length).to.eql(0);
         list.clear();
         expect(list.length).to.eql(0);
+      });
+
+      it('should return the removed items', () => {
+        let list = new ObservableList<number>([1, 2, 3, 4]);
+        expect(list.clear()).to.eql([1, 2, 3, 4]);
       });
 
       it('should trigger a changed signal', () => {
@@ -562,7 +605,7 @@ describe('phosphor-observablelist', () => {
 
     describe('#internal', () => {
 
-      it('should the protected internal array of items for the list', () => {
+      it('should be the protected internal array of items for the list', () => {
         let list = new LoggingList([1, 2, 3]);
         expect(list.internalArray).to.eql([1, 2, 3]);
       });
@@ -593,7 +636,7 @@ describe('phosphor-observablelist', () => {
 
       it('should be called when we replace items at a specific location in the list', () => {
         let list = new LoggingList([1, 2, 3]);
-        list.replace(1, 1);
+        list.replace(1, 1, []);
         expect(list.messages.indexOf('replaceItems')).to.not.be(-1);
       });
 
