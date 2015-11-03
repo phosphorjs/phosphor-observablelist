@@ -186,13 +186,44 @@ interface IObservableList<T> {
   set(index: number, item: T): T;
 
   /**
+   * Replace the contents of the list with the specified items.
+   *
+   * @param items - The items to assign to the list.
+   *
+   * @returns An array of the previous list items.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, items)`.
+   */
+  assign(items: T[]): T[];
+
+  /**
+   * Remove all items from the list.
+   *
+   * @returns An array of the items removed from the list.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, [])`.
+   */
+  clear(): T[];
+
+  /**
    * Add an item to the end of the list.
    *
    * @param item - The item to add to the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The new length of the list.
    */
   add(item: T): number;
+
+  /**
+   * Add multiple items to the end of the list.
+   *
+   * @param items - The items to add to the list.
+   *
+   * @returns The new length of the list.
+   */
+  addMany(items: T[]): number;
 
   /**
    * Insert an item into the list at a specific index.
@@ -203,9 +234,22 @@ interface IObservableList<T> {
    *
    * @param item - The item to insert into the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The new length of the list.
    */
   insert(index: number, item: T): number;
+
+  /**
+   * Insert multiple items into the list at a specific index.
+   *
+   * @param index - The index at which to insert the items. If this is
+   *   negative, it is offset from the end of the list. In all cases,
+   *   it is clamped to the bounds of the list.
+   *
+   * @param items - The items to insert into the list.
+   *
+   * @returns The new length of the list.
+   */
+  insertMany(index: number, items: T[]): number;
 
   /**
    * Move an item from one index to another.
@@ -216,8 +260,7 @@ interface IObservableList<T> {
    * @param toIndex - The desired index for the item. If this is
    *   negative, it is offset from the end of the list.
    *
-   * @returns `true` if the item was moved or `false` if either index
-   *   is out of range.
+   * @returns `true` if the item was moved, `false` otherwise.
    */
   move(fromIndex: number, toIndex: number): boolean;
 
@@ -252,17 +295,11 @@ interface IObservableList<T> {
    * @param count - The number of items to remove at the given index.
    *   This is clamped to the length of the list.
    *
-   * @param items - The items to insert at the specified index. If
-   *   this is not provided, it defaults to an empty array.
+   * @param items - The items to insert at the specified index.
    *
-   * @returns An array of items removed from the list.
+   * @returns An array of the items removed from the list.
    */
-  replace(index: number, count: number, items?: T[]): T[];
-
-  /**
-   * Remove all items from the list.
-   */
-  clear(): void;
+  replace(index: number, count: number, items: T[]): T[];
 }
 
 
@@ -288,7 +325,7 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
-   * A signal emitted when the list changes state.
+   * A signal emitted when the list has changed.
    *
    * #### Notes
    * This is a pure delegate to the [[changedSignal]].
@@ -380,14 +417,53 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
+   * Remove all items from the list.
+   *
+   * @returns An array of the items removed from the list.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, [])`.
+   */
+  clear(): T[] {
+    return this.replaceItems(0, this.internal.length, []);
+  }
+
+  /**
+   * Replace the contents of the list with the specified items.
+   *
+   * @param items - The items to assign to the list.
+   *
+   * @returns An array of the previous list items.
+   *
+   * #### Notes
+   * This is equivalent to `list.replace(0, list.length, items)`.
+   */
+  assign(items: T[]): T[] {
+    return this.replaceItems(0, this.internal.length, items);
+  }
+
+  /**
    * Add an item to the end of the list.
    *
    * @param item - The item to add to the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The new length of the list.
    */
   add(item: T): number {
-    return this.addItem(this.internal.length, item);
+    this.addItem(this.internal.length, item);
+    return this.internal.length;
+  }
+
+  /**
+   * Add multiple items to the end of the list.
+   *
+   * @param items - The items to add to the list.
+   *
+   * @returns The new length of the list.
+   */
+  addMany(items: T[]): number {
+    this.replaceItems(this.internal.length, 0, items);
+    return this.internal.length;
   }
 
   /**
@@ -399,10 +475,27 @@ class ObservableList<T> implements IObservableList<T> {
    *
    * @param item - The item to insert into the list.
    *
-   * @returns The new index of the item in the list.
+   * @returns The new length of the list.
    */
   insert(index: number, item: T): number {
-    return this.addItem(this._clamp(index), item);
+    this.addItem(this._clamp(index), item);
+    return this.internal.length;
+  }
+
+  /**
+   * Insert multiple items into the list at a specific index.
+   *
+   * @param index - The index at which to insert the items. If this is
+   *   negative, it is offset from the end of the list. In all cases,
+   *   it is clamped to the bounds of the list.
+   *
+   * @param items - The items to insert into the list.
+   *
+   * @returns The new length of the list.
+   */
+  insertMany(index: number, items: T[]): number {
+    this.replaceItems(this._clamp(index), 0, items);
+    return this.internal.length;
   }
 
   /**
@@ -414,8 +507,7 @@ class ObservableList<T> implements IObservableList<T> {
    * @param toIndex - The desired index for the item. If this is
    *   negative, it is offset from the end of the list.
    *
-   * @returns `true` if the item was moved or `false` if either index
-   *   is out of range.
+   * @returns `true` if the item was moved, `false` otherwise.
    */
   move(fromIndex: number, toIndex: number): boolean {
     let i = this._norm(fromIndex);
@@ -464,21 +556,12 @@ class ObservableList<T> implements IObservableList<T> {
    * @param count - The number of items to remove at the given index.
    *   This is clamped to the length of the list.
    *
-   * @param items - The items to insert at the specified index. If
-   *   this is not provided, it defaults to an empty array.
+   * @param items - The items to insert at the specified index.
    *
-   * @returns An array of items removed from the list.
+   * @returns An array of the items removed from the list.
    */
-  replace(index: number, count: number, items: T[] = []): T[] {
+  replace(index: number, count: number, items: T[]): T[] {
     return this.replaceItems(this._norm(index), this._limit(count), items);
-  }
-
-  /**
-   * Remove all items from the list.
-   */
-  clear(): void {
-    if (this.internal.length === 0) return;
-    this.replaceItems(0, this.internal.length, []);
   }
 
   /**
@@ -522,8 +605,7 @@ class ObservableList<T> implements IObservableList<T> {
    * @param toIndex - The desired index for the item. This is assumed
    *   to be an integer in the range `[0, internal.length)`.
    *
-   * @returns `true` if the item was moved or `false` if either index
-   *   is out of range.
+   * @returns `true` if the item was moved, `false` otherwise.
    *
    * #### Notes
    * This may be reimplemented by subclasses to customize the behavior.
@@ -573,8 +655,7 @@ class ObservableList<T> implements IObservableList<T> {
    * @param count - The number of items to remove from the list. This
    *   is assumed to be an integer in the range `[0, internal.length]`.
    *
-   * @param items - The items to insert at the specified index. If
-   *   this is not provided, it defaults to an empty array.
+   * @param items - The items to insert at the specified index.
    *
    * @returns An array of items removed from the list.
    *
