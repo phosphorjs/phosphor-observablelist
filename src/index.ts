@@ -156,6 +156,16 @@ interface IObservableList<T> {
   indexOf(item: T): number;
 
   /**
+   * Get the index of the last occurence of an item in the list.
+   *
+   * @param item - The item of interest.
+   *
+   * @returns The index of the specified item or `-1` if the item is
+   *   not contained in the list.
+   */
+  lastIndexOf(item: T): number;
+
+  /**
    * Get a shallow copy of a portion of the list.
    *
    * @param start - The start index of the slice, inclusive. If this is
@@ -356,6 +366,18 @@ class ObservableList<T> implements IObservableList<T> {
    */
   indexOf(item: T): number {
     return this.internal.indexOf(item);
+  }
+
+  /**
+   * Get the index of the last occurence of an item in the list.
+   *
+   * @param item - The item of interest.
+   *
+   * @returns The index of the specified item or `-1` if the item is
+   *   not contained in the list.
+   */
+  lastIndexOf(item: T): number {
+    return this.internal.lastIndexOf(item);
   }
 
   /**

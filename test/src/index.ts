@@ -165,6 +165,22 @@ describe('phosphor-observablelist', () => {
 
     });
 
+    describe('#lastIndexOf()', () => {
+
+      it('should get the index of the last occurence of an item in the list', () => {
+        let list = new ObservableList<number>([1, 2, 3, 3]);
+        expect(list.lastIndexOf(1)).to.be(0);
+        expect(list.lastIndexOf(2)).to.be(1);
+        expect(list.lastIndexOf(3)).to.be(3);
+      });
+
+      it('should return `-1` if the item is not in the list', () => {
+        let list = new ObservableList<number>([1, 2, 3, 3]);
+        expect(list.lastIndexOf(4)).to.be(-1);
+      });
+
+    });
+
     describe('#contains()', () => {
 
       it('should test whether the list contains a specific item', () => {
