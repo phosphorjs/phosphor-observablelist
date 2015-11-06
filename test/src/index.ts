@@ -20,32 +20,31 @@ import {
 
 class LoggingList extends ObservableList<number> {
 
-  messages: string[] = [];
+  methods: string[] = [];
 
   get internalArray(): number[] {
     return this.internal;
   }
 
   protected addItem(index: number, item: number): number {
-    this.messages.push('addItem');
+    this.methods.push('addItem');
     return super.addItem(index, item);
   }
 
   protected moveItem(fromIndex: number, toIndex: number): boolean {
-    this.messages.push('moveItem');
+    this.methods.push('moveItem');
     return super.moveItem(fromIndex, toIndex);
   }
 
   protected replaceItems(index: number, count: number, items: number[]): number[] {
-    this.messages.push('replaceItems');
+    this.methods.push('replaceItems');
     return super.replaceItems(index, count, items);
   }
 
   protected setItem(index: number, item: number): number {
-    this.messages.push('setItem');
+    this.methods.push('setItem');
     return super.setItem(index, item);
   }
-
 }
 
 
@@ -617,7 +616,7 @@ describe('phosphor-observablelist', () => {
       it('should be called when we add an item at the specified index', () => {
         let list = new LoggingList([1, 2, 3]);
         list.add(1);
-        expect(list.messages.indexOf('addItem')).to.not.be(-1);
+        expect(list.methods.indexOf('addItem')).to.not.be(-1);
       });
 
     });
@@ -627,7 +626,7 @@ describe('phosphor-observablelist', () => {
       it('should be called when we move an item from one index to another', () => {
         let list = new LoggingList([1, 2, 3]);
         list.move(1, 0);
-        expect(list.messages.indexOf('moveItem')).to.not.be(-1);
+        expect(list.methods.indexOf('moveItem')).to.not.be(-1);
       });
 
     });
@@ -637,7 +636,7 @@ describe('phosphor-observablelist', () => {
       it('should be called when we replace items at a specific location in the list', () => {
         let list = new LoggingList([1, 2, 3]);
         list.replace(1, 1, []);
-        expect(list.messages.indexOf('replaceItems')).to.not.be(-1);
+        expect(list.methods.indexOf('replaceItems')).to.not.be(-1);
       });
 
     });
@@ -647,7 +646,7 @@ describe('phosphor-observablelist', () => {
       it('should be called when we set the item at a specific index', () => {
         let list = new LoggingList([1, 2, 3]);
         list.set(1, 4);
-        expect(list.messages.indexOf('setItem')).to.not.be(-1);
+        expect(list.methods.indexOf('setItem')).to.not.be(-1);
       });
 
     });
