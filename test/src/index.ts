@@ -93,7 +93,7 @@ describe('phosphor-observablelist', () => {
         let called = false;
         let list = new ObservableList<number>();
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Add,
             newIndex: 0,
@@ -230,19 +230,19 @@ describe('phosphor-observablelist', () => {
 
       it('should return the item which occupied the index', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.set(1, 4)).to.eql(2);
+        expect(list.set(1, 4)).to.be(2);
       });
 
       it('should return `undefined` if the index is out of range', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.set(4, 4)).to.eql(void 0);
+        expect(list.set(4, 4)).to.be(void 0);
       });
 
       it('should trigger a changed signal', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Set,
             newIndex: 1,
@@ -275,7 +275,7 @@ describe('phosphor-observablelist', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Replace,
             newIndex: 0,
@@ -301,14 +301,14 @@ describe('phosphor-observablelist', () => {
 
       it('should return the new index of the item in the list', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.add(4)).to.eql(3);
+        expect(list.add(4)).to.be(3);
       });
 
       it('should trigger a changed signal', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Add,
             newIndex: 3,
@@ -346,16 +346,16 @@ describe('phosphor-observablelist', () => {
 
       it('should return the new index of the item in the list', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.insert(10, 4)).to.eql(3);
-        expect(list.insert(-2, 9)).to.eql(2);
-        expect(list.insert(-10, 5)).to.eql(0);
+        expect(list.insert(10, 4)).to.be(3);
+        expect(list.insert(-2, 9)).to.be(2);
+        expect(list.insert(-10, 5)).to.be(0);
       });
 
       it('should trigger a changed signal', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Add,
             newIndex: 1,
@@ -393,20 +393,20 @@ describe('phosphor-observablelist', () => {
 
       it('should return `true` if the item was moved', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.move(0, 1)).to.eql(true);
+        expect(list.move(0, 1)).to.be(true);
       });
 
       it('should return `false` if the either index is out of range', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.move(10, 1)).to.eql(false);
-        expect(list.move(1, 10)).to.eql(false);
+        expect(list.move(10, 1)).to.be(false);
+        expect(list.move(1, 10)).to.be(false);
       });
 
       it('should trigger a changed signal', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Move,
             newIndex: 1,
@@ -432,19 +432,19 @@ describe('phosphor-observablelist', () => {
 
       it('should return the index occupied by the item', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.remove(1)).to.eql(0);
+        expect(list.remove(1)).to.be(0);
       });
 
       it('should return `-1` if the item is not in the list', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.remove(10)).to.eql(-1);
+        expect(list.remove(10)).to.be(-1);
       });
 
       it('should trigger a changed signal', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Remove,
             newIndex: -1,
@@ -476,19 +476,19 @@ describe('phosphor-observablelist', () => {
 
       it('should return the item at the specified index', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.removeAt(1)).to.eql(2);
+        expect(list.removeAt(1)).to.be(2);
       });
 
       it('should return `undefined` if the index is out of range', () => {
         let list = new ObservableList<number>([1, 2, 3]);
-        expect(list.removeAt(10)).to.eql(void 0);
+        expect(list.removeAt(10)).to.be(void 0);
       });
 
       it('should trigger a changed signal', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Remove,
             newIndex: -1,
@@ -551,7 +551,7 @@ describe('phosphor-observablelist', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Replace,
             newIndex: 0,
@@ -572,9 +572,9 @@ describe('phosphor-observablelist', () => {
       it('should remove all items from the list', () => {
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.clear();
-        expect(list.length).to.eql(0);
+        expect(list.length).to.be(0);
         list.clear();
-        expect(list.length).to.eql(0);
+        expect(list.length).to.be(0);
       });
 
       it('should return the removed items', () => {
@@ -586,7 +586,7 @@ describe('phosphor-observablelist', () => {
         let called = false;
         let list = new ObservableList<number>([1, 2, 3, 4, 5, 6]);
         list.changed.connect((sender, args) => {
-          expect(sender).to.eql(list);
+          expect(sender).to.be(list);
           expect(args).to.eql({
             type: ListChangeType.Replace,
             newIndex: 0,
