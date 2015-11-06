@@ -11,7 +11,7 @@ then
     git config --global user.email "travis@travis-ci.com"
     git config --global user.name "Travis Bot"
 
-    git clone https://github.com/phosphorjs/phosphor-observablelist.git travis_docs_build
+    git clone https://${GHREPO}.git travis_docs_build
     cd travis_docs_build
     git checkout gh-pages
 
