@@ -137,16 +137,6 @@ interface IObservableList<T> {
   get(index: number): T;
 
   /**
-   * Get the index of the first occurrence of an item in the list.
-   *
-   * @param item - The item of interest.
-   *
-   * @returns The index of the specified item or `-1` if the item is
-   *   not contained in the list.
-   */
-  indexOf(item: T): number;
-
-  /**
    * Test whether the list contains a specific item.
    *
    * @param item - The item of interest.
@@ -154,6 +144,16 @@ interface IObservableList<T> {
    * @returns `true` if the list contains the item, `false` otherwise.
    */
   contains(item: T): boolean;
+
+  /**
+   * Get the index of the first occurence of an item in the list.
+   *
+   * @param item - The item of interest.
+   *
+   * @returns The index of the specified item or `-1` if the item is
+   *   not contained in the list.
+   */
+  indexOf(item: T): number;
 
   /**
    * Get a shallow copy of a portion of the list.
@@ -336,18 +336,6 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
-   * Get the index of the first occurrence of an item in the list.
-   *
-   * @param item - The item of interest.
-   *
-   * @returns The index of the specified item or `-1` if the item is
-   *   not contained in the list.
-   */
-  indexOf(item: T): number {
-    return this.internal.indexOf(item);
-  }
-
-  /**
    * Test whether the list contains a specific item.
    *
    * @param item - The item of interest.
@@ -356,6 +344,18 @@ class ObservableList<T> implements IObservableList<T> {
    */
   contains(item: T): boolean {
     return this.internal.indexOf(item) !== -1;
+  }
+
+  /**
+   * Get the index of the first occurence of an item in the list.
+   *
+   * @param item - The item of interest.
+   *
+   * @returns The index of the specified item or `-1` if the item is
+   *   not contained in the list.
+   */
+  indexOf(item: T): number {
+    return this.internal.indexOf(item);
   }
 
   /**
