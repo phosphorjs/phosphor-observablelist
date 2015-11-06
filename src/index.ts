@@ -48,7 +48,7 @@ enum ListChangeType {
 
 
 /**
- * An changed args object which is emitted by an observable list.
+ * The changed args object which is emitted by an observable list.
  */
 export
 interface IListChangedArgs<T> {
@@ -137,7 +137,7 @@ interface IObservableList<T> {
   get(index: number): T;
 
   /**
-   * Get the index of the first occurence of an item in the list.
+   * Get the index of the first occurrence of an item in the list.
    *
    * @param item - The item of interest.
    *
@@ -336,7 +336,7 @@ class ObservableList<T> implements IObservableList<T> {
   }
 
   /**
-   * Get the index of the first occurence of an item in the list.
+   * Get the index of the first occurrence of an item in the list.
    *
    * @param item - The item of interest.
    *
