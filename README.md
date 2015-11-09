@@ -91,7 +91,7 @@ Usage Examples
 **Note:** This module is fully compatible with Node/Babel/ES6/ES5. Simply
 omit the type declarations when using a language other than TypeScript.
 
-To observe changes to the list, you can simply hook a callable up to the `changed` signal:
+To observe changes to the list, simply hook a callable up to the `changed` signal:
 
 ```typescript
 let called = false;
@@ -106,7 +106,7 @@ list.clear();
 console.log(list); // []
 ```
 
-for more advanced behaviour, you can use the args passed by default to the callable:
+for more advanced behaviour, use the args passed by default to the callable:
 
 ```typescript
 let list = new ObservableList<number>();
@@ -120,7 +120,7 @@ list.changed.connect((sender, args) => {
 list.add(1); // will give the change args above.
 ```
 
-You can pass default arguments into the constructor:
+Default arguments can be passed into the constructor:
 
 ```typescript
 let list = new ObservableList<number>([1, 1, 2, 3, 5, 8]);
@@ -128,7 +128,7 @@ let list = new ObservableList<number>([1, 1, 2, 3, 5, 8]);
 let strlist = new ObservableList<string>(['f', 'i', 'b']);
 ```
 
-You can retrieve an item at a given index in the list using `.get`:
+Retrieve an item at a given index in the list using `.get`:
 
 ```typescript
 let list = new ObservableList<number>([1, 1, 2, 3, 5, 8]);
