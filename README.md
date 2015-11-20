@@ -155,7 +155,7 @@ list.indexOf(4); // -1
 ```typescript
 let list = new ObservableList<string>(['a', 'b', 'c']);
 list.contains('a'); // true
-list.contains('b'); // false
+list.contains('d'); // false
 ```
 
 `ObservableList` also has `slice` behaviour:
