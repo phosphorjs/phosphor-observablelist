@@ -4,13 +4,11 @@ phosphor-observablelist
 [![Build Status](https://travis-ci.org/phosphorjs/phosphor-observablelist.svg)](https://travis-ci.org/phosphorjs/phosphor-observablelist?branch=master)
 [![Coverage Status](https://coveralls.io/repos/phosphorjs/phosphor-observablelist/badge.svg?branch=master&service=github)](https://coveralls.io/github/phosphorjs/phosphor-observablelist?branch=master)
 
-A sequence container which can be observed for changes.
-
-[API Docs](http://phosphorjs.github.io/phosphor-observablelist/api/)
+This module provides a sequence container which can be observed for changes. Additional methods to manipulate lists, insert and move elements, are also included.
 
 
-Package Install
----------------
+<a name='install'></a>Package Install
+-------------------------------------
 
 **Prerequisites**
 - [node](http://nodejs.org/)
@@ -79,10 +77,8 @@ Bundle for the Browser
 
 Follow the package install instructions first.
 
-```bash
-npm install --save-dev browserify
-browserify myapp.js -o mybundle.js
-```
+Any bundler that understands how to `require()` files with .js and .css
+extensions can be used with this package.
 
 
 Usage Examples
@@ -91,132 +87,171 @@ Usage Examples
 **Note:** This module is fully compatible with Node/Babel/ES6/ES5. Simply
 omit the type declarations when using a language other than TypeScript.
 
-To observe changes to the list, simply hook a callable up to the `changed` signal:
+To test the `phosphor-queue` module in a node interactive shell after the
+[installation](#install), open a terminal in your current working directory and
+run:
 
-```typescript
-let called = false;
-let list = new ObservableList<number>();
-list.changed.connect(() => { called = true; });
-
-// Insert `1` at index `0`
-list.insert(0, 1); // called === true;
-
-console.log(list); // [1]
-list.clear();
-console.log(list); // []
+```bash
+node
 ```
 
-for more advanced behaviour, use the args passed by default to the callable:
+Then import the module into node with the following command:
 
-```typescript
-let list = new ObservableList<number>();
-list.changed.connect((sender, args) => {
-  console.log(args.type); // ListChangeType.Add
-  console.log(args.newIndex); // 0
-  console.log(args.newValue); // 1
-  console.log(args.oldIndex); // -1
-  console.log(args.oldValue); // void 0
-});
-list.add(1); // will give the change args above.
+```node
+> observablelist = require('phosphor-observablelist');
 ```
 
-Default arguments can be passed into the constructor:
+The `ObservableList()` constructor can now be used to create new lists:
 
-```typescript
-let list = new ObservableList<number>([1, 1, 2, 3, 5, 8]);
-// or
-let strlist = new ObservableList<string>(['f', 'i', 'b']);
+```node
+> let list = new observablelist.ObservableList([1, 1, 2, 3, 5, 8]);
+
+> let strlist = new observablelist.ObservableList(['f', 'i', 'b', 'j']);
 ```
 
-Retrieve an item at a given index in the list using `.get`:
+Two basic methods of Observable Lists are `get()` and `set()`. The `get()`
+method retrieves a value at a specific index, if the index is negative it
+offsets from the end of the list, indexes out of range return `undefined`. The
+`set()` method, on the other hand, sets the value of an item at a given
+position, the same index rules apply in this case.
 
-```typescript
-let list = new ObservableList<number>([1, 1, 2, 3, 5, 8]);
-list.get(4); // 5
+```node
+> list.get(4)
+5
+> list.get(-2)
+5
+> list.get(100)
+undefined
 
-// this will offset from the end of the list if passed
-// a negative index
-list.get(-2); // 5
+> list.set(1, 5)
+1
+> list.set(-2, 8)
+5
 
-// and will return `undefined` if the index is out of range
-list.get(101); // void 0
+> list
+[ 1, 5, 2, 3, 8, 8 ]
 ```
 
-`indexOf` works just like arrays in javascript/typescript:
+There are other methods to retrieve information about the elements in Observable
+Lists: `indexOf()` looks for its argument in the list and returns the index of
+the first occurrence, `contains()` returns `true` if it the given argument is
+in the list and `false` otherwise.
 
-```typescript
-let list = new ObservableList<number>([1, 2, 3, 1, 2, 3]);
-list.indexOf(2); // 1 - returns the first occurrence.
-list.indexOf(4); // -1
+```node
+> let strlist1 = new obslist.ObservableList(['f', 'i', 'b', 'j']);
+
+> strlist.indexOf('b');
+2
+> strlist.indexOf('p');
+-1
+
+> strlist.contains('b');
+true
+> strlist.contains('p');
+false
 ```
 
-`contains` returns a boolean to denote whether the item was found:
+Observable Lists also support slicing by means of the `slice()` method which
+takes up to 2 arguments. If no argument is passed it returns a copy of the
+list, if only one argument is passed it returns a slice from that index to the
+end of the list, two arguments determine the lower and upper indexes for the
+slice.
 
-```typescript
-let list = new ObservableList<string>(['a', 'b', 'c']);
-list.contains('a'); // true
-list.contains('d'); // false
+```node
+> let list = new obslist.ObservableList([1, 2, 3, 1, 2, 3]);
+
+> list.slice()
+[ 1, 2, 3, 1, 2, 3 ]
+> list.slice(2)
+[ 3, 1, 2, 3 ]
+> list.slice(1)
+[ 2, 3, 1, 2, 3 ]
+> list.slice(-1)
+[ 3 ]
+> list.slice(1, -1)
+[ 2, 3, 1, 2 ]
 ```
 
-`ObservableList` also has `slice` behaviour:
+There are additional methods to alter a `ObservableList`, the method names are
+somewhat self-descriptive.  `add()` adds a new item and returns its index,
+`move()` takes two arguments and moves the element at the fist position to the
+second position returning `true` if the operation was successful. To remove the
+first occurrence a given value use `remove()` which will return the
+corresponding index, if any. Elements at a specific position are removed by
+`removeAt()`, which takes as argument the index, removes it and returns the
+deleted element. To clear a list and remove the elements altogether use
+`clear()`.
 
-```typescript
-let list = new ObservableList<number>([1, 2, 3]);
-list.slice(); // [1, 2, 3] - this returns a copy
-list.slice(1); // 2
-list.slice(-1); // 3
-list.slice(4); // []
-list.slice(1, -1); // 2
+```node
+> let list = new obslist.ObservableList([1, 2, 3, 1, 2, 3]);
+
+> list.add(5);
+6
+> list;
+[ 1, 2, 3, 1, 2, 3, 5 ]
+
+> list.move(1, -1)
+true
+> list
+[ 1, 3, 1, 2, 3, 5, 2 ]
+
+> list.remove(3);
+1
+> list
+[ 1, 1, 2, 3, 5, 2 ]
+> list.removeAt(-1);
+2
+> list;
+[ 1, 1, 2, 3, 5 ]
+
+> list.clear();
+[ 1, 1, 2, 3, 5 ]
+> list
+[]
+
 ```
 
-To set an item at a given index, use `set`. This returns the item which previously occupied that index:
+The main advantage of using `ObservableList` is that the resulting object can be
+observed for changes. To do this you have to hook a callable up to the
+`changed` signal. For instance, we can use a Boolean variable `called` to check
+whether or not the list has been changed:
 
-```typescript
-let list = new ObservableList<number>([1, 2, 3, 4]);
-list.set(1, 5); // returns 2
-console.log(list); // [1, 5, 3, 4]
-list.set(-1, 8); // returns 4
-console.log(list); // [1, 5, 3, 8]
+```node
+
+> let list = new obslist.ObservableList([1, 2, 3, 4, 1, 2, 3]);
+
+> let called = false;
+> list.changed.connect(() => { called = true; });
+
+> called
+false
+> list.insert(0, 5);
+0
+> called
+true
 ```
 
-To replace all the items in a list, use `assign`. This also returns the previous items:
+This basic monitoring can be further expanded, you can use the arguments passed
+by default to the callable;
 
-```typescript
-let list = new ObservableList<string>(['a', 'b', 'c']);
-list.assign(['f']); // returns ['a', 'b', 'c']
-console.log(list); // 'f'
+```node
+> list.changed.connect((sender, args) => {
+... console.log(args.type);
+... console.log(args.newIndex);
+... console.log(args.newValue);
+... console.log(args.oldIndex);
+... console.log(args.oldValue);
+... });
+
+> list.add(9);
+0
+8
+9
+-1
+undefined
+8
 ```
 
-To add items to the list, use `add`:
-
-```typescript
-let list = new ObservableList<number>([1, 2, 3]);
-list.add(4); // returns 3, the index of the new item.
-console.log(list); // [1, 2, 3, 4]
-```
-
-To move items internally, use `move`:
-
-```typescript
-let list = new ObservableList<number>([1, 2, 3]);
-
-// move item at index `1` to index `2`
-list.move(1, 2); // true
-console.log(list); // [1, 3, 2]
-```
-
-To remove an item from the list, use `remove`. This will remove the first occurrence of the item:
-
-```typescript
-let list = new ObservableList<number>([1, 2, 3, 1]);
-list.remove(1); // returns 0
-console.log(list); [2, 3, 1]
-```
-
-To remove an item at a specific index, use `removeAt`:
-
-```typescript
-let list = new ObservableList<number>([1, 2, 3]);
-list.removeAt(1); // 2
-console.log(list); // [1, 3]
-```
+API
+---
+[API Docs](http://phosphorjs.github.io/phosphor-observablelist/api/)
