@@ -5,9 +5,8 @@ phosphor-observablelist
 [![Coverage Status](https://coveralls.io/repos/phosphorjs/phosphor-observablelist/badge.svg?branch=master&service=github)](https://coveralls.io/github/phosphorjs/phosphor-observablelist?branch=master)
 
 This module provides a sequence container which can be observed for changes.
-Additional methods are include to to manipulate lists, insert and move
+Additional methods are included to to manipulate lists, insert and move
 elements.
-
 
 
 <a name='install'></a>Package Install
@@ -182,7 +181,7 @@ if the operation was successful. To remove the first occurrence of a given
 value use `remove()` which will return the corresponding index, if any.
 Elements at a specific position are removed by `removeAt()`, which takes as
 argument the index, removes it and returns the deleted element. To clear a list
-and remove the elements altogether use `clear()`.
+and delete the elements altogether use `clear()`.
 
 ```node
 > let list = new obslist.ObservableList([1, 2, 3, 1, 2, 3]);
