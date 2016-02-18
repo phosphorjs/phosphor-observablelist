@@ -4,7 +4,10 @@ phosphor-observablelist
 [![Build Status](https://travis-ci.org/phosphorjs/phosphor-observablelist.svg)](https://travis-ci.org/phosphorjs/phosphor-observablelist?branch=master)
 [![Coverage Status](https://coveralls.io/repos/phosphorjs/phosphor-observablelist/badge.svg?branch=master&service=github)](https://coveralls.io/github/phosphorjs/phosphor-observablelist?branch=master)
 
-This module provides a sequence container which can be observed for changes. Additional methods to manipulate lists, insert and move elements, are also included.
+This module provides a sequence container which can be observed for changes.
+Additional methods are include to to manipulate lists, insert and move
+elements.
+
 
 
 <a name='install'></a>Package Install
@@ -172,15 +175,14 @@ slice.
 [ 2, 3, 1, 2 ]
 ```
 
-There are additional methods to alter a `ObservableList`, the method names are
-somewhat self-descriptive.  `add()` adds a new item and returns its index,
-`move()` takes two arguments and moves the element at the fist position to the
-second position returning `true` if the operation was successful. To remove the
-first occurrence a given value use `remove()` which will return the
-corresponding index, if any. Elements at a specific position are removed by
-`removeAt()`, which takes as argument the index, removes it and returns the
-deleted element. To clear a list and remove the elements altogether use
-`clear()`.
+To alter an `ObservableList` the method names are somewhat self-descriptive.
+`add()` adds a new item and returns its index, `move()` takes two arguments and
+moves the element at the fist position to the second position returning `true`
+if the operation was successful. To remove the first occurrence of a given
+value use `remove()` which will return the corresponding index, if any.
+Elements at a specific position are removed by `removeAt()`, which takes as
+argument the index, removes it and returns the deleted element. To clear a list
+and remove the elements altogether use `clear()`.
 
 ```node
 > let list = new obslist.ObservableList([1, 2, 3, 1, 2, 3]);
@@ -211,10 +213,10 @@ true
 
 ```
 
-The main advantage of using `ObservableList` is that the resulting object can be
-observed for changes. To do this you have to hook a callable up to the
-`changed` signal. For instance, we can use a Boolean variable `called` to check
-whether or not the list has been changed:
+The main advantage of using  the `ObservableList` object is that the resulting
+object can be observed for changes. To do this you have to hook a callable up
+to the `changed` signal. For instance, we can use a Boolean variable `called`
+to check whether or not the list has been changed:
 
 ```node
 
@@ -232,7 +234,7 @@ true
 ```
 
 This basic monitoring can be further expanded, you can use the arguments passed
-by default to the callable;
+by default to the callable:
 
 ```node
 > list.changed.connect((sender, args) => {
