@@ -89,9 +89,9 @@ Usage Examples
 **Note:** This module is fully compatible with Node/Babel/ES6/ES5. Simply
 omit the type declarations when using a language other than TypeScript.
 
-To test the `phosphor-queue` module in a node interactive shell after the
-[installation](#install), open a terminal in your current working directory and
-run:
+To test the `phosphor-observablelist` module in a node interactive shell after
+the [installation](#install), open a terminal in your current working directory
+and run:
 
 ```bash
 node
